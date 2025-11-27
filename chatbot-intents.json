@@ -1,0 +1,75 @@
+{
+  "greeting": {
+    "keywords": ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
+    "patterns": ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
+    "responses": [
+      "Hello! 👋 Great to see you! How can I help advance your career today?",
+      "Hi there! 😊 Ready to take the next step in your career journey?",
+      "Hey! Welcome back! What can I assist you with today?"
+    ]
+  },
+  "jobSearch": {
+    "keywords": ["job", "work", "position", "vacancy", "opening", "hiring", "employment"],
+    "patterns": ["find job", "job search", "looking for work", "job hunting", "employment", "look for a job"],
+    "responses": [
+      "Let's find you an amazing opportunity! 🎯 To give you the best recommendations, what type of role interests you?",
+      "Exciting! Job hunting can be rewarding. 🚀 Let's narrow it down. What's your target role?",
+      "I'd love to help you find the perfect fit! 💼 What role are you targeting?"
+    ]
+  },
+  "resume": {
+    "keywords": ["resume", "cv", "curriculum vitae", "cover letter"],
+    "patterns": ["resume help", "cv help", "review my resume", "build a resume"],
+    "responses": [
+      "Let's create a resume that gets you interviews! 📄 Which section needs the most work?",
+      "A great resume is your ticket to an interview! ✨ What specifically would you like help with?",
+      "I'll help you build a standout resume! 🌟 Where should we start?"
+    ]
+  },
+  "interview": {
+    "keywords": ["interview", "interviewing", "interview prep"],
+    "patterns": ["interview tips", "help with interview", "prepare for interview"],
+    "responses": [
+      "You've got this! 🎤 Let's practice. What kind of interview are you preparing for (technical, behavioral, etc.)?",
+      "Preparation is key! I can help with common questions, the STAR method, or technical prep. What do you need?"
+    ]
+  },
+  "salary": {
+    "keywords": ["salary", "pay", "compensation", "wage", "benefits", "negotiate"],
+    "patterns": ["salary negotiation", "how much should I ask for", "what is the salary for"],
+    "responses": [
+      "Let's talk compensation! 💰 Are you looking for salary data for a specific role, or tips on negotiation?",
+      "Salary is an important part of any offer. I can provide average salary ranges or negotiation strategies."
+    ]
+  },
+  "skills": {
+    "keywords": ["skill", "learn", "training", "course", "certification", "upskill", "education"],
+    "patterns": ["what skills should I learn", "how to get certified", "best courses for..."],
+    "responses": [
+      "Building your skills is the best investment! 📈 What area are you interested in (e.g., Python, Marketing, AWS)?",
+      "Continuous learning is key! What new skill are you looking to add to your toolkit?"
+    ]
+  },
+  "farewell": {
+    "keywords": ["bye", "goodbye", "thanks", "thank you", "see you", "later"],
+    "patterns": ["bye", "goodbye", "thanks", "thank you", "see you"],
+    "responses": [
+      "You're welcome! 😊 Best of luck with your career journey.",
+      "Happy to help! 🌟 Come back anytime!",
+      "Glad I could assist! 💼 Keep pushing forward!"
+    ]
+  },
+  "general": {
+    "keywords": [],
+    "patterns": [],
+    "responses": [
+      "I'm here to help with your career! I can assist with job searches, resumes, and interview prep. What would you like to explore?",
+      "I didn't quite catch that. You can ask me for help with finding jobs, building a resume, or preparing for an interview.",
+      "Could you rephrase that? 💭 I specialize in career advice for freshers. How can I assist?"
+    ],
+    "followUp": [
+      "Is there anything else I can help you with regarding your job search?",
+      "Remember, I can also help with resume tips or interview practice!"
+    ]
+  }
+}

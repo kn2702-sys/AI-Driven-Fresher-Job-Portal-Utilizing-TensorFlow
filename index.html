@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshStart Jobs - Job Portal for Fresh Graduates</title>
+    <meta name="description" content="Find the perfect job for fresh graduates with AI-powered recommendations and smart matching">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+</head>
+
+<body>
+    <script>
+  window.addEventListener("load", () => {
+    setTimeout(async () => {
+      // Preload TensorFlow and USE silently
+      await Promise.all([
+        import('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0'),
+        import('https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder')
+      ]);
+      console.log("✅ TensorFlow preloaded in background");
+    }, 2000); // delay to avoid blocking initial render
+  });
+</script>
+
+    <header class="header">
+        <nav class="nav container">
+            <div class="nav__brand">
+                <svg class="nav__logo" width="250" height="40" viewBox="0 0 250 40" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#22D3EE;" />
+                            <stop offset="50%" style="stop-color:#3B82F6;" />
+                            <stop offset="100%" style="stop-color:#8B5CF6;" />
+                        </linearGradient>
+                    </defs>
+                    <text x="0" y="30" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="url(#rainbow)">
+                        FreshStart Jobs
+                    </text>
+                </svg>
+            </div>
+            <div class="nav__menu" id="navMenu">
+    <ul class="nav__list">
+        <li class="nav__item">
+            <a href="#" class="nav__link" data-section="home">Home</a>
+        </li>
+        <li class="nav__item">
+            <a href="#" class="nav__link" data-section="jobs">Jobs</a>
+        </li>
+        <li class="nav__item">
+            <a href="#" class="nav__link" data-section="profile">Profile</a>
+        </li>
+        <li class="nav__item">
+            <a href="#" class="nav__link" data-section="premium">Services</a>
+        </li>
+        
+        <li class="nav__item">
+            <a href="#" class="nav__link" data-section="interviewer">AI Interviewer</a>
+        </li>
+        
+        <li class="nav__item">
+            <a href="#" class="nav__link" data-section="recommendations">AI Recommendations</a>
+        </li>
+    </ul>
+</div>
+            <div class="nav__actions">
+                <div class="auth__buttons" id="authButtons">
+                    <button class="btn btn--secondary" id="loginBtn">Login</button>
+                    <button class="btn btn--primary" id="signupBtn">Sign Up</button>
+                </div>
+                <div class="user__menu hidden" id="userMenu">
+                    <span class="user__name" id="userName">Welcome, User</span>
+                    <button class="btn btn--outline btn--sm" id="logoutBtn">Logout</button>
+                </div>
+                <button class="nav__toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="section" id="homeSection">
+            <section class="hero">
+                <div class="hero__content">
+                    <h1 class="hero__title" data-text="Kickstart Your Career with AI-Powered Insights">Kickstart Your Career with AI-Powered Insights</h1>
+                    <p class="hero__subtitle">𝐖𝐞𝐥𝐜𝐨𝐦𝐞 𝐭𝐨 𝐭𝐡𝐞 𝐟𝐮𝐭𝐮𝐫𝐞 𝐨𝐟 𝐫𝐞𝐜𝐫𝐮𝐢𝐭𝐦𝐞𝐧𝐭. 𝐅𝐫𝐞𝐬𝐡𝐒𝐭𝐚𝐫𝐭 𝐉𝐨𝐛𝐬 𝐮𝐭𝐢𝐥𝐢𝐳𝐞𝐬 𝐜𝐮𝐭𝐭𝐢𝐧𝐠-𝐞𝐝𝐠𝐞 𝐀𝐈 𝐭𝐨 𝐜𝐫𝐞𝐚𝐭𝐞 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢𝐳𝐞𝐝 𝐚𝐧𝐝 𝐞𝐟𝐟𝐢𝐜𝐢𝐞𝐧𝐭 𝐣𝐨𝐛 𝐬𝐞𝐚𝐫𝐜𝐡 𝐞𝐱𝐩𝐞𝐫𝐢𝐞𝐧𝐜𝐞. 𝐎𝐮𝐫 𝐢𝐧𝐭𝐞𝐥𝐥𝐢𝐠𝐞𝐧𝐭 𝐦𝐚𝐭𝐜𝐡𝐢𝐧𝐠 𝐬𝐲𝐬𝐭𝐞𝐦 𝐠𝐨𝐞𝐬 𝐛𝐞𝐲𝐨𝐧𝐝 𝐭𝐡𝐞 𝐫𝐞𝐬𝐮𝐦𝐞, 𝐢𝐝𝐞𝐧𝐭𝐢𝐟𝐲𝐢𝐧𝐠 𝐭𝐡𝐞 𝐫𝐨𝐥𝐞𝐬 𝐚𝐧𝐝 𝐜𝐨𝐦𝐩𝐚𝐧𝐢𝐞𝐬 𝐰𝐡𝐞𝐫𝐞 𝐲𝐨𝐮𝐫 𝐭𝐚𝐥𝐞𝐧𝐭𝐬 𝐰𝐢𝐥𝐥 𝐛𝐞 𝐭𝐫𝐮𝐥𝐲 𝐯𝐚𝐥𝐮𝐞𝐝. 𝐒𝐚𝐲 𝐠𝐨𝐨𝐝𝐛𝐲𝐞 𝐭𝐨 𝐭𝐡𝐞 𝐨𝐥𝐝 𝐰𝐚𝐲 𝐨𝐟 𝐣𝐨𝐛 𝐡𝐮𝐧𝐭𝐢𝐧𝐠 𝐚𝐧𝐝 𝐥𝐞𝐭 𝐭𝐞𝐜𝐡𝐧𝐨𝐥𝐨𝐠𝐲 𝐠𝐮𝐢𝐝𝐞 𝐲𝐨𝐮 𝐭𝐨 𝐲𝐨𝐮𝐫 𝐧𝐞𝐱𝐭 𝐠𝐫𝐞𝐚𝐭 𝐨𝐩𝐩𝐨𝐫𝐭𝐮𝐧𝐢𝐭𝐲.</p>
+                </div>
+            </section>
+
+            <div class="stats">
+                <div class="container">
+                    <div class="stats__grid">
+                        <div class="stat">
+                            <h3 class="stat__number">5000+</h3>
+                            <p class="stat__label">Job Opportunities</p>
+                        </div>
+                        <div class="stat">
+                            <h3 class="stat__number">95%</h3>
+                            <p class="stat__label">Match Accuracy</p>
+                        </div>
+                        <div class="stat">
+                            <h3 class="stat__number">2000+</h3>
+                            <p class="stat__label">Success Stories</p>
+                        </div>
+                        <div class="stat">
+                            <h3 class="stat__number">50+</h3>
+                            <p class="stat__label">Top Companies</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="container">
+                    <h2 class="features__title">Why Choose FreshStart Jobs?</h2>
+                    <div class="features__grid">
+                        <div class="feature">
+                            <div class="feature__icon">👾</div>
+                            <h3 class="feature__title">AI-Powered Matching</h3>
+                            <p class="feature__description">Our smart algorithm matches you with jobs based on your skills, interests, and career goals.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature__icon">📄</div>
+                            <h3 class="feature__title">Resume Parser</h3>
+                            <p class="feature__description">Upload your resume and let AI extract key information to build your profile automatically.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature__icon">🎯</div>
+                            <h3 class="feature__title">Skill Gap Analysis</h3>
+                            <p class="feature__description">Identify missing skills and get personalized learning recommendations for your dream job.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature__icon">📱</div>
+                            <h3 class="feature__title">Mobile Friendly</h3>
+                            <p class="feature__description">Apply for jobs on the go with our fully responsive mobile-friendly platform.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="platform-stats">
+                <div class="container">
+                    <div class="stats-dashboard">
+                        <div class="stat-card">
+                            <span class="stat-number">15,420+</span>
+                            <span class="stat-label">Successful Placements</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">4.9/5</span>
+                            <span class="stat-label">Average Rating</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">17 Days</span>
+                            <span class="stat-label">Avg. Time to Hire</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonials-section">
+                <div class="container">
+                    <div class="testimonials__header">
+                        <h2 class="testimonials__title">┗━━━━━━⊱ 𝑺𝒖𝒄𝒄𝒆𝒔𝒔 𝑺𝒕𝒐𝒓𝒊𝒆𝒔 𝒇𝒓𝒐𝒎 𝑶𝒖𝒓 𝑪𝒐𝒎𝒎𝒖𝒏𝒊𝒕𝒚 ⊰━━━━━━┛</h2>
+                        <p class="testimonials__subtitle">See how AI-powered insights have transformed careers for thousands of fresh graduates</p>
+                    </div>
+                    <div class="testimonials__grid" id="testimonialsGrid">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section hidden" id="jobsSection">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Find Your Perfect Job</h2>
+                    <div class="search__controls">
+                        <div class="search__bar">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search jobs, companies, skills...">
+                        </div>
+                        <button class="btn btn--primary" id="searchBtn">Search</button>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <div class="filters__row">
+                        <select class="form-control filter__select" id="locationFilter">
+                            <option value="">All Locations</option>
+                            <option value="Bangalore">Bangalore</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Chennai">Chennai</option>
+                            <option value="Pune">Pune</option>
+                            <option value="Gurgaon">Gurgaon</option>
+                        </select>
+                        <select class="form-control filter__select" id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Design">Design</option>
+                            <option value="Business">Business</option>
+                            <option value="Content">Content</option>
+                            <option value="Customer Service">Customer Service</option>
+                        </select>
+                        <select class="form-control filter__select" id="typeFilter">
+                            <option value="">All Types</option>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Internship">Internship</option>
+                        </select>
+                        <select class="form-control filter__select" id="remoteFilter">
+                            <option value="">All Work Modes</option>
+                            <option value="true">Remote</option>
+                            <option value="false">On-site</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="jobs__results">
+                    <div class="jobs__count">
+                        <span id="jobsCount">0 jobs found</span>
+                    </div>
+                    <div class="jobs__grid" id="jobsGrid">
+                        </div>
+                </div>
+
+                <section id="aiBlogSection" class="section">
+                    <div class="section__header">
+                        <h2 class="section__title">Latest AI Insights</h2>
+                        <p class="section__subtitle">Stay updated with emerging trends, breakthroughs & tools in Artificial Intelligence</p>
+                    </div>
+                    <div class="ai__blog__controls">
+                        <button id="refreshAIBlogs" class="btn btn--outline">🔄 Refresh Insights</button>
+                    </div>
+                    <div class="ai__blogs__results">
+                        <div class="jobs__count"><span id="aiBlogCount">Loading AI insights...</span></div>
+                        <div class="ai__blogs__grid" id="aiBlogGrid"></div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="section hidden" id="profileSection">
+            <div class="container">
+                <h2 class="section__title">Create Your Profile</h2>
+                <div class="profile__container">
+                    <div class="profile__form">
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label class="form-label" for="fullName">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="phone">Phone</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="location">Preferred Location</label>
+                                <select class="form-control" id="location" required>
+                                    <option value="">Select Location</option>
+                                    <option value="Bangalore">Bangalore</option>
+                                    <option value="Mumbai">Mumbai</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Hyderabad">Hyderabad</option>
+                                    <option value="Chennai">Chennai</option>
+                                    <option value="Pune">Pune</option>
+                                    <option value="Gurgaon">Gurgaon</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="education">Education</label>
+                                <input type="text" class="form-control" id="education" placeholder="e.g., B.Tech Computer Science">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="skills">Skills (comma separated)</label>
+                                <input type="text" class="form-control" id="skills" placeholder="e.g., JavaScript, Python, Marketing">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="interests">Career Interests</label>
+                                <input type="text" class="form-control" id="interests" placeholder="e.g., Web Development, Data Science">
+                            </div>
+                            <button type="submit" class="btn btn--primary btn--full-width">Save Profile</button>
+                        </form>
+                    </div>
+                    <div class="resume__upload">
+                        <div class="upload__area" id="uploadArea">
+                            <div class="upload__icon">📄</div>
+                            <h3>Upload Your Resume</h3>
+                            <p>Let our AI extract information automatically</p>
+                            <input type="file" id="resumeUpload" accept=".pdf,.doc,.docx" class="upload__input">
+                            <button class="btn btn--outline" onclick="document.getElementById('resumeUpload').click()">Choose File</button>
+                        </div>
+                        <div class="resume__preview hidden" id="resumePreview">
+                            <h4>Extracted Information</h4>
+                            <div class="extracted__info" id="extractedInfo"></div>
+                            <button class="btn btn--primary" id="useExtractedBtn">Use This Information</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile__dashboard hidden" id="profileDashboard">
+                    <h3>Your Profile</h3>
+                    <div class="dashboard__grid">
+                        <div class="dashboard__card">
+                            <h4>Profile Completeness</h4>
+                            <div class="progress__bar">
+                                <div class="progress__fill" id="profileProgress"></div>
+                            </div>
+                            <span id="profilePercentage">0%</span>
+                        </div>
+                        <div class="dashboard__card">
+                            <h4>Job Applications</h4>
+                            <div class="applications__list" id="applicationsList">
+                                <p>No applications yet</p>
+                            </div>
+                        </div>
+                        <div class="dashboard__card">
+                            <h4>Recommended Jobs</h4>
+                            <div class="recommended__jobs" id="recommendedJobs">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section hidden" id="premiumSection">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Unlock Your Full Potential with Premium</h2>
+                    <p class="section__subtitle">Get exclusive access to professional tools and one-on-one guidance to supercharge your job search.</p>
+                </div>
+                <div class="pricing__container">
+                    <div class="pricing__card popular">
+                        <div class="pricing__header">
+                            <span class="popular__badge">Best Value</span>
+                            <h3 class="pricing__title">Career Accelerator</h3>
+                            <p class="pricing__price">₹5,000 <span class="price__duration">/ 6 months</span></p>
+                            <p class="pricing__description">Everything you need to land your dream job, faster.</p>
+                        </div>
+                        <div class="pricing__features">
+                            <ul class="features__list">
+                                <li><i class="fas fa-check-circle"></i> One-on-one professional guidance</li>
+                                <li><i class="fas fa-check-circle"></i> Aptitude and soft skills classes</li>
+                                <li><i class="fas fa-check-circle"></i> Automated Interview Scheduling</li>
+                                <li><i class="fas fa-check-circle"></i> 24/7 Priority Support</li>
+                                <li><i class="fas fa-check-circle"></i> Access to jobs across different domains</li>
+                            </ul>
+                        </div>
+                        <div class="pricing__footer">
+                            <button class="btn btn--primary btn--full-width">Get Started Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+</section>
+        <section class="section hidden" id="recommendationsSection">
+            <div class="container">
+                <h2 class="section__title">AI-Powered Job Recommendations</h2>
+                <div class="recommendations__intro">
+                    <p>Based on your profile, skills, and preferences, here are jobs that match your profile:</p>
+                </div>
+                <div class="recommendations__content" id="recommendationsContent">
+                    <div class="no__profile">
+                        <div class="empty__state">
+                            <h3>Create Your Profile First</h3>
+                            <p>Upload your resume and complete your profile to get personalized AI recommendations.</p>
+                            <button class="btn btn--primary" id="createProfileBtn">Create Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section hidden" id="interviewerSection">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">AI Mock Interviewer</h2>
+                    <p class="section__subtitle">Practice your interview skills live with our AI. Enter your API key, select a role, and start.</p>
+                </div>
+
+                <div class="interview-setup">
+                    <input type="password" id="apiKeyInput" class="form-control" placeholder="Enter your Google AI Studio API Key...">
+                </div>
+
+                <div class="interview-controls">
+                    <select id="interviewJobTitle" class="form-control">
+                        <option value="Software Developer">Software Developer</option>
+                        <option value="Data Analyst">Data Analyst</option>
+                        <option value="Marketing Associate">Marketing Associate</option>
+                        <option value="UI/UX Designer">UI/UX Designer</option>
+                    </select>
+                    <button class="btn btn--primary" id="startInterviewBtn">Start Interview</button>
+                </div>
+
+                <div class="interview-ui">
+                    <div id="aiResponse" class="ai-speech-bubble">
+                        Enter your API key and click "Start" to begin.
+                    </div>
+                    <div id="interviewStatus" class="interview-status-indicator">Idle</div>
+                    <div id="userTranscript" class="user-transcript"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section class="top-companies">
+        <div class="container">
+            <h2 class="section__title">𝐓𝐫𝐮𝐬𝐭𝐞𝐝 𝐛𝐲 𝐆𝐫𝐚𝐝𝐮𝐚𝐭𝐞𝐬 𝐚𝐭 𝐓𝐨𝐩 𝐆𝐥𝐨𝐛𝐚𝐥 𝐂𝐨𝐦𝐩𝐚𝐧𝐢𝐞𝐬</h2>
+            <p>
+                "🇾​​🇴​​🇺​​🇷​ ​🇦​​🇲​​🇧​​🇮​​🇹​​🇮​​🇴​​🇳​ ​🇩​​🇪​​🇸​​🇪​​🇷​​🇻​​🇪​​🇸​ ​🇦​ ​🇼​​🇴​​🇷​​🇱​​🇩​-​🇨​​🇱​​🇦​​🇸​​🇸​ ​🇩​​🇪​​🇸​​🇹​​🇮​​🇳​​🇦​​🇹​​🇮​​🇴​​🇳​. ​🇼​​🇪​ ​🇪​​🇲​​🇵​​🇴​​🇼​​🇪​​🇷​ ​🇬​​🇷​​🇦​​🇩​​🇺​​🇦​​🇹​​🇪​​🇸​ ​🇹​​🇴​ ​🇹​​🇷​​🇦​​🇳​​🇸​​🇫​​🇴​​🇷​​🇲​ ​🇹​​🇭​​🇪​​🇮​​🇷​ ​🇦​​🇨​​🇦​​🇩​​🇪​​🇲​​🇮​​🇨​ ​🇵​​🇴​​🇹​​🇪​​🇳​​🇹​​🇮​​🇦​​🇱​ ​🇮​​🇳​​🇹​​🇴​ ​🇮​​🇲​​🇵​​🇦​​🇨​​🇹​​🇫​​🇺​​🇱​ ​🇨​​🇦​​🇷​​🇪​​🇪​​🇷​​🇸​ ​🇧​​🇾​ ​🇫​​🇦​​🇨​​🇮​​🇱​​🇮​​🇹​​🇦​​🇹​​🇮​​🇳​​🇬​ ​🇨​​🇴​​🇳​​🇳​​🇪​​🇨​​🇹​​🇮​​🇴​​🇳​​🇸​ ​🇼​​🇮​​🇹​​🇭​ ​🇱​​🇪​​🇦​​🇩​​🇮​​🇳​​🇬​ ​🇬​​🇱​​🇴​​🇧​​🇦​​🇱​ ​🇨​​🇴​​🇷​​🇵​​🇴​​🇷​​🇦​​🇹​​🇮​​🇴​​🇳​​🇸​. ​🇴​​🇺​​🇷​ ​🇳​​🇪​​🇹​​🇼​​🇴​​🇷​​🇰​ ​🇮​​🇸​ ​🇧​​🇺​​🇮​​🇱​​🇹​ ​🇴​​🇳​ ​🇦​ ​🇫​​🇴​​🇺​​🇳​​🇩​​🇦​​🇹​​🇮​​🇴​​🇳​ ​🇴​​🇫​ ​🇹​​🇷​​🇺​​🇸​​🇹​, ​🇼​​🇮​​🇹​​🇭​ ​🇨​​🇴​​🇺​​🇳​​🇹​​🇱​​🇪​​🇸​​🇸​ ​🇸​​🇺​​🇨​​🇨​​🇪​​🇸​​🇸​ ​🇸​​🇹​​🇴​​🇷​​🇮​​🇪​​🇸​ ​🇴​​🇫​ ​🇸​​🇹​​🇺​​🇩​​🇪​​🇳​​🇹​​🇸​ ​🇼​​🇭​​🇴​ ​🇭​​🇦​​🇻​​🇪​ ​🇱​​🇦​​🇺​​🇳​​🇨​​🇭​​🇪​​🇩​ ​🇹​​🇭​​🇪​​🇮​​🇷​ ​🇵​​🇷​​🇴​​🇫​​🇪​​🇸​​🇸​​🇮​​🇴​​🇳​​🇦​​🇱​ ​🇯​​🇴​​🇺​​🇷​​🇳​​🇪​​🇾​​🇸​ ​🇦​​🇹​ ​🇨​​🇴​​🇲​​🇵​​🇦​​🇳​​🇮​​🇪​​🇸​ ​🇷​​🇪​​🇳​​🇴​​🇼​​🇳​​🇪​​🇩​ ​🇫​​🇴​​🇷​ ​🇮​​🇳​​🇳​​🇴​​🇻​​🇦​​🇹​​🇮​​🇴​​🇳​, ​🇱​​🇪​​🇦​​🇩​​🇪​​🇷​​🇸​​🇭​​🇮​​🇵​, ​🇦​​🇳​​🇩​ ​🇬​​🇷​​🇴​​🇼​​🇹​​🇭​.​🇴​​🇺​​🇷​ ​🇵​​🇱​​🇦​​🇹​​🇫​​🇴​​🇷​​🇲​ ​🇮​​🇸​ ​🇹​​🇭​​🇪​ ​🇵​​🇷​​🇴​​🇻​​🇪​​🇳​ ​🇱​​🇦​​🇺​​🇳​​🇨​​🇭​​🇵​​🇦​​🇩​ ​🇫​​🇴​​🇷​ ​🇹​​🇭​​🇪​ ​🇳​​🇪​​🇽​​🇹​ ​🇬​​🇪​​🇳​​🇪​​🇷​​🇦​​🇹​​🇮​​🇴​​🇳​ ​🇴​​🇫​ ​🇹​​🇦​​🇱​​🇪​​🇳​​🇹​. ​🇼​​🇪​ ​🇵​​🇷​​🇮​​🇩​​🇪​ ​🇴​​🇺​​🇷​​🇸​​🇪​​🇱​​🇻​​🇪​​🇸​ ​🇴​​🇳​ ​🇨​​🇴​​🇳​​🇳​​🇪​​🇨​​🇹​​🇮​​🇳​​🇬​ ​🇦​​🇲​​🇧​​🇮​​🇹​​🇮​​🇴​​🇺​​🇸​ ​🇬​​🇷​​🇦​​🇩​​🇺​​🇦​​🇹​​🇪​​🇸​ ​🇼​​🇮​​🇹​​🇭​ ​🇨​​🇦​​🇷​​🇪​​🇪​​🇷​-​🇩​​🇪​​🇫​​🇮​​🇳​​🇮​​🇳​​🇬​ ​🇴​​🇵​​🇵​​🇴​​🇷​​🇹​​🇺​​🇳​​🇮​​🇹​​🇮​​🇪​​🇸​ ​🇦​​🇹​ ​🇹​​🇭​​🇪​ ​🇼​​🇴​​🇷​​🇱​​🇩​❜​🇸​ ​🇲​​🇴​​🇸​​🇹​ ​🇵​​🇷​​🇪​​🇸​​🇹​​🇮​​🇬​​🇮​​🇴​​🇺​​🇸​ ​🇦​​🇳​​🇩​ ​🇮​​🇳​​🇳​​🇴​​🇻​​🇦​​🇹​​🇮​​🇻​​🇪​ ​🇨​​🇴​​🇲​​🇵​​🇦​​🇳​​🇮​​🇪​​🇸​. ​🇹​​🇭​​🇪​ ​🇸​​🇺​​🇨​​🇨​​🇪​​🇸​​🇸​ ​🇴​​🇫​ ​🇴​​🇺​​🇷​ ​🇺​​🇸​​🇪​​🇷​​🇸​ ​🇮​​🇸​ ​🇴​​🇺​​🇷​ ​🇬​​🇷​​🇪​​🇦​​🇹​​🇪​​🇸​​🇹​ ​🇲​​🇪​​🇹​​🇷​​🇮​​🇨​, ​🇷​​🇪​​🇫​​🇱​​🇪​​🇨​​🇹​​🇮​​🇳​​🇬​ ​🇴​​🇺​​🇷​ ​🇨​​🇴​​🇲​​🇲​​🇮​​🇹​​🇲​​🇪​​🇳​​🇹​ ​🇹​​🇴​ ​🇧​​🇷​​🇮​​🇩​​🇬​​🇮​​🇳​​🇬​ ​🇹​​🇭​​🇪​ ​🇬​​🇦​​🇵​ ​🇧​​🇪​​🇹​​🇼​​🇪​​🇪​​🇳​ ​🇦​​🇨​​🇦​​🇩​​🇪​​🇲​​🇮​​🇨​ ​🇦​​🇨​​🇭​​🇮​​🇪​​🇻​​🇪​​🇲​​🇪​​🇳​​🇹​ ​🇦​​🇳​​🇩​ ​🇵​​🇷​​🇴​​🇫​​🇪​​🇸​​🇸​​🇮​​🇴​​🇳​​🇦​​🇱​ ​🇪​​🇽​​🇨​​🇪​​🇱​​🇱​​🇪​​🇳​​🇨​​🇪​."
+            </p>
+            <div class="company-logos">
+                <div class="company-logo-item" title="Amazon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo" loading="lazy" width="140" height="40">
+                </div>
+                <div class="company-logo-item" title="Google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google Logo" loading="lazy" width="140" height="40">
+                </div>
+                <div class="company-logo-item" title="Apple">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Logo" loading="lazy" width="40" height="40">
+                </div>
+                <div class="company-logo-item" title="Infosys">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg" alt="Infosys Logo" loading="lazy" width="140" height="40">
+                </div>
+                <div class="company-logo-item" title="IBM">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM Logo" loading="lazy" width="140" height="40">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" id="siteFooter">
+    <div class="container">
+        <div class="footer-content">
+
+            <div class="footer-section">
+                <h3 class="footer-title">Follow Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn" class="social-icon linkedin">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn">
+                    </a>
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook" class="social-icon facebook">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook">
+                    </a>
+                    <a href="https://github.com" target="_blank" aria-label="GitHub" class="social-icon github">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" alt="GitHub">
+                    </a>
+                    <a href="https://x.com" target="_blank" aria-label="X" class="social-icon x">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X logo">
+                    </a>
+                    <a href="https://slack.com" target="_blank" aria-label="Slack" class="social-icon slack">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/slack.svg" alt="Slack">
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Quick Links</h3>
+                <div class="quick-links">
+                    <a href="#about" class="footer-link">About Us</a>
+                    <a href="#privacy" class="footer-link">Privacy Policy</a>
+                    <a href="#terms" class="footer-link">Terms of Service</a>
+                    <a href="#support" class="footer-link">Support</a>
+                </div>
+            </div>
+            
+             <div class="footer-section">
+                <h3 class="footer-title">Contact Us</h3>
+                <div class="contact-info">
+                    <p>📧 careers@freshstartjobs.com</p>
+                    <p>📞 +91 9876543210</p>
+                    <p>📍 Bardhaman, West Bengal, India</p>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">AI-ML Newsletter</h3>
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: var(--font-size-base); margin-bottom: 16px;">
+                    Get daily AI-driven career insights, tech news, and job-seeking strategies delivered to your inbox.
+                </p>
+                
+                <form class="newsletter-form" id="newsletterForm" novalidate>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <input type="email" 
+                               id="newsletterEmail" 
+                               placeholder="Enter your email" 
+                               class="form-control footer-form-control"
+                               required>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--full-width btn-footer-gradient">
+                        Subscribe Now
+                    </button>
+                </form>
+                
+                <p id="newsletterMessage" class="newsletter-message" style="display: none;"></p>
+            </div>
+
+           
+
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FreshStart Jobs. All rights reserved. | Made with ❤️ for Fresh Graduates</p>
+        </div>
+    </div>
+</footer>
+
+    <div class="modal hidden" id="loginModal">
+        <div class="modal__backdrop" id="loginBackdrop"></div>
+        <div class="modal__content auth__modal">
+            <div class="modal__header">
+                <h3 class="modal__title">Welcome Back</h3>
+                <button class="modal__close" id="loginClose">&times;</button>
+            </div>
+            <div class="modal__body">
+                <form id="loginForm" class="auth__form">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email Address</label>
+                        <input type="email" class="form-control" id="loginEmail" required placeholder="Enter your email">
+                        <div class="error__message" id="loginEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" required placeholder="Enter your password">
+                        <div class="error__message" id="loginPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width" id="loginSubmitBtn">
+                        <span class="btn__text">Login</span>
+                        <div class="btn__spinner hidden"></div>
+                    </button>
+                </form>
+                <div class="auth__divider">
+                    <span>Don't have an account?</span>
+                </div>
+                <button class="btn btn--outline btn--full-width" id="switchToSignup">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal hidden" id="signupModal">
+        <div class="modal__backdrop" id="signupBackdrop"></div>
+        <div class="modal__content auth__modal">
+            <div class="modal__header">
+                <h3 class="modal__title">Create Your Account</h3>
+                <button class="modal__close" id="signupClose">&times;</button>
+            </div>
+            <div class="modal__body">
+                <form id="signupForm" class="auth__form">
+                    <div class="form__section">
+                        <h4 class="form__section-title">Personal Information</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="signupName">Full Name *</label>
+                            <input type="text" class="form-control" id="signupName" required placeholder="Enter your full name">
+                            <div class="error__message" id="signupNameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="signupEmail">Email Address *</label>
+                            <input type="email" class="form-control" id="signupEmail" required placeholder="Enter your email">
+                            <div class="error__message" id="signupEmailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="signupPassword">Password *</label>
+                            <input type="password" class="form-control" id="signupPassword" required placeholder="Minimum 8 characters">
+                            <div class="password__strength" id="passwordStrength"></div>
+                            <div class="error__message" id="signupPasswordError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">Confirm Password *</label>
+                            <input type="password" class="form-control" id="confirmPassword" required placeholder="Re-enter your password">
+                            <div class="error__message" id="confirmPasswordError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="signupPhone">Phone Number</label>
+                            <input type="tel" class="form-control" id="signupPhone" placeholder="+91 XXXXX XXXXX">
+                            <div class="error__message" id="signupPhoneError"></div>
+                        </div>
+                    </div>
+                    <div class="form__section">
+                        <h4 class="form__section-title">Professional Information</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="signupLocation">Location/City *</label>
+                            <select class="form-control" id="signupLocation" required>
+                                <option value="">Select your location</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <option value="Pune">Pune</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Gurgaon">Gurgaon</option>
+                                <option value="Noida">Noida</option>
+                            </select>
+                            <div class="error__message" id="signupLocationError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="educationLevel">Education Level *</label>
+                            <select class="form-control" id="educationLevel" required>
+                                <option value="">Select education level</option>
+                                <option value="High School">High School</option>
+                                <option value="Diploma">Diploma</option>
+                                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                                <option value="Master's Degree">Master's Degree</option>
+                                <option value="PhD">PhD</option>
+                            </select>
+                            <div class="error__message" id="educationLevelError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fieldOfStudy">Field of Study</label>
+                            <input type="text" class="form-control" id="fieldOfStudy" placeholder="e.g., Computer Science, Marketing">
+                            <div class="error__message" id="fieldOfStudyError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="signupSkills">Skills (comma separated) *</label>
+                            <input type="text" class="form-control" id="signupSkills" required placeholder="e.g., JavaScript, Python, Marketing">
+                            <div class="error__message" id="signupSkillsError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="experienceLevel">Experience Level *</label>
+                            <select class="form-control" id="experienceLevel" required>
+                                <option value="">Select experience level</option>
+                                <option value="Fresher (0 years)">Fresher (0 years)</option>
+                                <option value="0-1 years">0-1 years</option>
+                                <option value="1-2 years">1-2 years</option>
+                            </select>
+                            <div class="error__message" id="experienceLevelError"></div>
+                        </div>
+                    </div>
+                    <div class="form__section">
+                        <h4 class="form__section-title">Job Preferences</h4>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Job Categories *</label>
+                            <div class="checkbox__group" id="jobCategories">
+                                <label class="checkbox__item"><input type="checkbox" value="Technology"> Technology</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Marketing"> Marketing</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Data Science"> Data Science</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Design"> Design</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Business"> Business</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Content"> Content</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Customer Service"> Customer Service</label>
+                                <label class="checkbox__item"><input type="checkbox" value="Finance"> Finance</label>
+                            </div>
+                            <div class="error__message" id="jobCategoriesError"></div>
+                        </div>
+                    </div>
+                    <div class="form__section">
+                        <div class="form-group">
+                            <label class="checkbox__item">
+                                <input type="checkbox" id="termsAccepted" required> I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a> *
+                            </label>
+                            <div class="error__message" id="termsError"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width" id="signupSubmitBtn">
+                        <span class="btn__text">Create Account</span>
+                        <div class="btn__spinner hidden"></div>
+                    </button>
+                </form>
+                <div class="auth__divider">
+                    <span>Already have an account?</span>
+                </div>
+                <button class="btn btn--outline btn--full-width" id="switchToLogin">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal hidden" id="jobModal">
+        <div class="modal__backdrop" id="modalBackdrop"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title" id="modalTitle">Job Details</h3>
+                <button class="modal__close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal__body" id="modalBody">
+                </div>
+            <div class="modal__footer">
+                <button class="btn btn--primary" id="applyBtn">Apply Now</button>
+                <button class="btn btn--outline" id="modalClose2">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading hidden" id="loadingOverlay">
+        <div class="loading__spinner"></div>
+        <p class="loading__text">Processing with AI...</p>
+    </div>
+
+    <div class="cb-fab" aria-label="Open chat" title="Chat with AI">💬</div>
+    <div class="cb-panel" role="dialog" aria-modal="false" aria-label="AI Assistant">
+        <div class="cb-header">
+            <div class="cb-title">AI Assistant</div>
+            <div class="cb-status" id="cbStatus">Ready</div>
+        </div>
+        <div class="cb-messages" id="cbMessages" aria-live="polite"></div>
+        <div class="cb-footer">
+            <div class="cb-quick" id="cbQuick"></div>
+            <textarea id="cbInput" placeholder="Type a message..." rows="1"></textarea>
+            <button id="cbSend" class="cb-send" aria-label="Send">Send</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.min.js"></script>
+    <script src="assets/js/chatbot.js" defer></script>
+    <script type="module">
+      import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+      window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
+
+    <script src="app.js"></script>
+</html>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
