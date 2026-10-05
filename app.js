@@ -2051,16 +2051,36 @@ function setupInterviewEventListeners() {
     };
 
     startBtn.addEventListener('click', startInterview);
+
+    // Prefill a key entered earlier in this session (convenience only;
+    // the key never leaves the visitor's browser).
+    const savedKeyInput = document.getElementById('apiKeyInput');
+    if (savedKeyInput) {
+        const savedKey = sessionStorage.getItem('freshstart_gemini_key');
+        if (savedKey) savedKeyInput.value = savedKey;
+    }
 }
 
 function startInterview() {
-    // ❗ MAKE SURE YOUR API KEY IS PASTED HERE
-    const apiKey = "AIzaSyCmedhJOlg_YpMKK37-DcLftVZPT2HVnCQ"; 
+    // The Gemini API key is supplied by the visitor in the #apiKeyInput password
+    // field (see index.html) and is kept only in this browser session via
+    // sessionStorage. Never hardcode an API key here: a key committed to a
+    // public repository is compromised the moment it is pushed.
+    const keyInput = document.getElementById('apiKeyInput');
+    let apiKey = (keyInput && keyInput.value ? keyInput.value : '').trim();
 
-    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
-        showError("API Key is missing in app.js. Please follow the instructions to add it.");
+    if (!apiKey) {
+        apiKey = (sessionStorage.getItem('freshstart_gemini_key') || '').trim();
+    }
+
+    if (!apiKey) {
+        showError("Please enter your Google AI Studio API key in the field above to start the interview. You can create one free at aistudio.google.com");
+        if (keyInput) keyInput.focus();
         return;
     }
+
+    // Remember the key for this tab session so the visitor is not asked twice.
+    sessionStorage.setItem('freshstart_gemini_key', apiKey);
 
     if (!window.GoogleGenerativeAI) {
         showError("AI SDK is not loaded. Please check the script tag in index.html.");
@@ -2149,6 +2169,12 @@ async function getAIResponse(userAnswer) {
 }
 
 function speakAndListen(textToSpeak, onEndCallback) {
+    if (!synthesis) {
+        document.getElementById('aiResponse').textContent = textToSpeak;
+        updateInterviewStatus("Speech synthesis is not supported in this browser.", "error");
+        if (onEndCallback) onEndCallback();
+        return;
+    }
     if (synthesis.speaking) synthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
